@@ -4,15 +4,17 @@ from ctypes import CDLL,c_int,c_char_p,c_void_p
 from ctypes import byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
+from os import environ
 import logging
 from gtpclasses import *
 from mnlclass import *
 
 logger = logging.getLogger(__name__)
+
 try:
-    lgnl = CDLL("./libgtpnl.so")
+    lgnl = CDLL("libgtpnl.so")
 except OSError:
-    logger.error("no libgtpnl .so")
+    logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
     exit(1)
 
 

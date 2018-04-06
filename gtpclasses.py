@@ -40,23 +40,3 @@ class GTPTUNNEL(Structure):
                   ("gtp_version", c_int),
                   ("u", VERSIONS), #gtp teids
                  ]
-
-#static struct {
-#  int                 genl_id;
-#  struct mnl_socket  *nl;
-#  bool                is_enabled;
-#} gtp_nl;
-#
-#
-#struct mnl_socket {
-#	int                     fd;
-#	struct sockaddr_nl      addr;
-#};
-#
-#struct sockaddr_nl {
-#   sa_family_t     nl_family;  /* AF_NETLINK */
-#   unsigned short  nl_pad;     /* Zero */
-#   pid_t           nl_pid;     /* Port ID */
-#   _u32           nl_groups;  /* Multicast groups mask */
-#};
-#

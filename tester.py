@@ -28,6 +28,4 @@ if __name__ == "__main__":
     tunnel_del(-1, 124, 125, devname,sockp)
     tunnel_list(devname, sockp)
     logger.info("done")
-    sleep(10)
-#    dev_stop(devname)
-
+    dev_stop(devname)
