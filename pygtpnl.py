@@ -8,6 +8,7 @@ import logging
 from gtpclasses import *
 from mnlclass import *
 
+logger = logging.getLogger(__name__)
 try:
     lgnl = CDLL("./libgtpnl.so")
 except OSError:
