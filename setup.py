@@ -7,14 +7,15 @@ setup(
     description = "Python wrapper to libgptnl",
     author = "Aapo Poutanen",
     author_email = "aapo.poutanen@cumucore.com",
+    url = "https://github.com/cumucore/pygtpnl",
     keywords = ["netlink", "gtp", "sgw"],
     classifiers = [
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 1 - Alpha",
         "Environment :: Other Environment",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
-        "Operating System :: OS Independent",
+        "Operating System :: Linux",
         ]
 )
