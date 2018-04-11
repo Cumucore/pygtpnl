@@ -35,7 +35,7 @@ def dev_create(ip, devname):
         exit(1)
 
     # call libgtpnl to do it, mnl dep
-    creator = lgnl.gtp_dev_create_sgsn
+    creator = lgnl.gtp_dev_create
     try:
         creator(-1 , bstring, sock0.fileno(), sock1.fileno())
     # cant catch C errors
