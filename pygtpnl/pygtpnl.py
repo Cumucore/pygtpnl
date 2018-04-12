@@ -10,15 +10,14 @@ from .structures import *
 
 logger = logging.getLogger(__name__)
 
+try:
+    lgnl = CDLL("libgtpnl.so")
+except OSError:
+    logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
+    exit(1)
 
 # 2 socks needed, although GTPv0 is not used, use ascii devnames
 def dev_create(ip, devname):
-    try:
-        lgnl = CDLL("libgtpnl.so")
-    except OSError:
-        logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
-        exit(1)
-
     bstring = devname.encode('ascii')
     sock0 = socket(AF_INET, SOCK_DGRAM)
     sock1 = socket(AF_INET, SOCK_DGRAM)
@@ -47,12 +46,6 @@ def dev_create(ip, devname):
 
 # destroy a gtp dev, kill all, no errors ever, TODO: maybe propagate from C, not trivial
 def dev_stop(name):
-    try:
-        lgnl = CDLL("libgtpnl.so")
-    except OSError:
-        logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
-        exit(1)
-
     dev_destroy = lgnl.gtp_dev_destroy
     bstring = name.encode('ascii')
     dev_destroy.argtypes = [c_char_p]
@@ -63,11 +56,6 @@ def dev_stop(name):
 '''
 def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     logger.info("adding tunnel ue:{}, enb:{}, i:{}, o:{}".format(ue_ip, enb_ip, i_tei, o_tei))
-    try:
-        lgnl = CDLL("libgtpnl.so")
-    except OSError:
-        logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
-        exit(1)
 
     ifindex = lgnl.if_nametoindex
     ifindex.argtypes = [c_char_p]
@@ -109,12 +97,6 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
 
 def tunnel_del(ns, i_tei, o_tei, devname, sock):
     logger.info("deleting tunnel i:{}, o:{}".format(i_tei, o_tei))
-    try:
-        lgnl = CDLL("libgtpnl.so")
-    except OSError:
-        logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
-        exit(1)
-
     ifindex = lgnl.if_nametoindex
     ifindex.argtypes = [c_char_p]
     idx = ifindex(devname.encode('ascii'))
@@ -146,12 +128,6 @@ def tunnel_del(ns, i_tei, o_tei, devname, sock):
 
 #uses C to print tunnel list of device, maybe pythonification?
 def tunnel_list(devname, sock):
-    try:
-        lgnl = CDLL("libgtpnl.so")
-    except OSError:
-        logger.error("no libgtpnl.so in search path, check LD_LIBRARY_PATH variable")
-        exit(1)
-
     tlist = lgnl.gtp_list_tunnel
     tlist.argtypes = [c_int, c_void_p]
     if_mnlsock_id = lgnl.genl_lookup_family
