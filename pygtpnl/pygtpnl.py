@@ -6,8 +6,7 @@ from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
 from os import environ
 import logging
-from .gtpclasses import *
-from .mnlclass import *
+from .structures import *
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +22,9 @@ def dev_create(ip, devname):
     bstring = devname.encode('ascii')
     sock0 = socket(AF_INET, SOCK_DGRAM)
     sock1 = socket(AF_INET, SOCK_DGRAM)
+    #ip_bytes = IN_ADDR(unpack("<I", inet_aton(ip))[0])
+    #c_sock0 = SOCKADDR_IN(AF_INET, 3386, ip_bytes, [0]*8)
+    #c_sock1 = SOCKADDR_IN(AF_INET, 2152, ip_bytes, [0]*8)
 
     # sockname tuple str, int
     v0 = (ip, 3386)

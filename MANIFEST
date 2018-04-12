@@ -2,6 +2,5 @@
 README.txt
 setup.py
 pygtpnl/__init__.py
-pygtpnl/gtpclasses.py
-pygtpnl/mnlclass.py
 pygtpnl/pygtpnl.py
+pygtpnl/structures.py
