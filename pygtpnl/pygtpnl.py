@@ -79,19 +79,28 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
     sockaddr = SOCKADDR_NL(sock.family, 0, sock.pid, 0)
     logger.debug("sock.pid: {}".format(sock.pid))
+
+    #sopen = lgnl.genl_socket_open
+    #nlsock = sopen()
+    #logger.debug("nlsock: {}".format(nlsock))
+
+
     c_sock = MNL_SOCK(sock._sock.fileno(), sockaddr)
+    logger.debug("c_sock done")
     logger.debug("c_sock: {}".format(c_sock))
 
     #what is this sock_id, do it in Python maybe?
     if_mnlsock_id = lgnl.genl_lookup_family
     if_mnlsock_id.argtypes = [c_void_p, c_char_p]
     mnlsock_id = if_mnlsock_id(byref(c_sock), devname.encode('ascii'))
-    logger.debug("mnlsock_id: {}".format(mnlsock_id))
+    #mnlsock_id = if_mnlsock_id(nlsock, devname.encode('ascii'))
+    #logger.debug("mnlsock_id: {}".format(mnlsock_id))
 
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_int, c_void_p, c_void_p]
     try:
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
+        #ret=tadd(mnlsock_id, nlsock, byref(tunnel))
         logger.info("add returned:  {}".format(ret))
     except Exception as e:
         logger.error("{}".format(e))
