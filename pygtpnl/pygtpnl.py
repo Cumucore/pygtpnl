@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-from ctypes import CDLL,c_int,c_char_p,c_void_p
+from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
@@ -58,7 +58,9 @@ def dev_stop(name):
     dev_destroy.argtypes = [c_char_p]
     dev_destroy(bstring)
 
-# the tunnel creator requires nlsock address as arg to  preserve abstraction level it seems
+'''the tunnel creator requires nlsock address as arg to  preserve abstraction level it seems
+   Sock is a pyroute2 NetlinkSocket object
+'''
 def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     logger.info("adding tunnel ue:{}, enb:{}, i:{}, o:{}".format(ue_ip, enb_ip, i_tei, o_tei))
     try:
@@ -85,7 +87,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     #logger.debug("nlsock: {}".format(nlsock))
 
 
-    c_sock = MNL_SOCK(sock._sock.fileno(), sockaddr)
+    c_sock = MNL_SOCK(sock.fileno(), sockaddr)
     logger.debug("c_sock done")
     logger.debug("c_sock: {}".format(c_sock))
 
@@ -97,7 +99,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     #logger.debug("mnlsock_id: {}".format(mnlsock_id))
 
     tadd = lgnl.gtp_add_tunnel
-    tadd.argtypes = [c_int, c_void_p, c_void_p]
+    tadd.argtypes = [c_uint16, c_void_p, c_void_p]
     try:
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
         #ret=tadd(mnlsock_id, nlsock, byref(tunnel))
