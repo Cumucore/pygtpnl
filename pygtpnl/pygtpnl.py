@@ -91,7 +91,6 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     try:
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
         #ret=tadd(mnlsock_id, nlsock, byref(tunnel))
-        logger.info("add returned:  {}".format(ret))
     except Exception as e:
         logger.error("{}".format(e))
 
