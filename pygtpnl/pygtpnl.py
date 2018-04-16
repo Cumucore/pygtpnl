@@ -60,6 +60,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     ifindex = lgnl.if_nametoindex
     ifindex.argtypes = [c_char_p]
     idx = ifindex(devname.encode('ascii'))
+    logger.debug("if_index: {}".format(idx))
     zero = V0(0)
     one = V1(i_tei, o_tei)
     versions = VERSIONS(zero, one)
@@ -83,14 +84,14 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     if_mnlsock_id = lgnl.genl_lookup_family
     if_mnlsock_id.argtypes = [c_void_p, c_char_p]
     mnlsock_id = if_mnlsock_id(byref(c_sock), devname.encode('ascii'))
-    #mnlsock_id = if_mnlsock_id(nlsock, devname.encode('ascii'))
+    #mnlsock_id = if_mnlsock_id(sock, devname.encode('ascii'))
     #logger.debug("mnlsock_id: {}".format(mnlsock_id))
 
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_uint16, c_void_p, c_void_p]
     try:
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
-        #ret=tadd(mnlsock_id, nlsock, byref(tunnel))
+        #ret=tadd(mnlsock_id, sock, byref(tunnel))
     except Exception as e:
         logger.error("{}".format(e))
 
