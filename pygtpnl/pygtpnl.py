@@ -82,13 +82,11 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     logger.debug("c_sock done")
     logger.debug("c_sock: {}".format(c_sock))
 
-    #what is this sock_id, do it in Python maybe?
+    #TODO: pythonize
     if_mnlsock_id = lgnl.genl_lookup_family
     if_mnlsock_id.argtypes = [c_void_p, c_char_p]
     mnlsock_id = if_mnlsock_id(byref(c_sock), devname.encode('ascii'))
-    #mnlsock_id = if_mnlsock_id(sock, devname.encode('ascii'))
     logger.debug("mnlsock_id: {}".format(mnlsock_id))
-    #mnlsock_id=28
 
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_uint16, c_void_p, c_void_p]
@@ -110,12 +108,14 @@ def tunnel_del(ns, i_tei, o_tei, devname, sock):
     enb_bytes = IN_ADDR(0)
     # 1 is gtp version
     tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
-    sockaddr = SOCKADDR_NL(sock.family, 0, sock.pid, 0)
+    sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
     logger.debug("sock.pid: {}".format(sock.pid))
-    c_sock = MNL_SOCK(sock._sock.fileno(), sockaddr)
+
+    c_sock = MNL_SOCK(sock.fileno(), sockaddr)
+    logger.debug("c_sock done")
     logger.debug("c_sock: {}".format(c_sock))
 
-    #what is this sock_id, do it in Python maybe?
+    #TODO: pythonize
     if_mnlsock_id = lgnl.genl_lookup_family
     if_mnlsock_id.argtypes = [c_void_p, c_char_p]
     mnlsock_id = if_mnlsock_id(byref(c_sock), devname.encode('ascii'))
