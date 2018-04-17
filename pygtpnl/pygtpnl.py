@@ -1,14 +1,14 @@
-#!/bin/env python3
+'''
+Python wrapper for libgtpnl
+'''
 
 from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
-#from pyroute2.netlink.generic import GenericNetlinkSocket
 from .gtpsock import GtpSocket
-from os import environ
-import logging
 from .structures import *
+import logging
 
 logger = logging.getLogger(__name__)
 
