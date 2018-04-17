@@ -2,6 +2,14 @@
 
 Works by calling libgtpnl C functions through ctypes
 
+## Install
+
+sudo is required to install to default env
+
+``` shell
+python3 setup.py install
+```
+
 ## Usage
 
 Write python, and call functions:
