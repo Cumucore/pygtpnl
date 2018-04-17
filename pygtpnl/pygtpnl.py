@@ -4,6 +4,8 @@ from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
+#from pyroute2.netlink.generic import GenericNetlinkSocket
+from .gtpsock import GtpSocket
 from os import environ
 import logging
 from .structures import *
@@ -44,6 +46,11 @@ def dev_create(ip, devname):
         logger.error("{}".format(e))
         exit(1)
 
+    #Open communications 
+    sock = GtpSocket()
+    sock.discovery()
+    return sock
+
 # destroy a gtp dev, kill all, no errors ever, TODO: maybe propagate from C, not trivial
 def dev_stop(name):
     dev_destroy = lgnl.gtp_dev_destroy
@@ -68,7 +75,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     enb_bytes = IN_ADDR(unpack("<I", inet_aton(enb_ip))[0])
     # 1 is gtp version
     tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
-    sockaddr = SOCKADDR_NL(sock.family, 0, sock.pid, 0)
+    sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
     logger.debug("sock.pid: {}".format(sock.pid))
 
     c_sock = MNL_SOCK(sock.fileno(), sockaddr)
