@@ -1,16 +1,33 @@
 from pyroute2.netlink import CTRL_CMD_GETFAMILY
 from pyroute2.netlink import GENL_ID_CTRL
 from pyroute2.netlink import NLM_F_REQUEST
+from pyroute2.netlink import NLM_F_ACK
 from pyroute2.netlink import ctrlmsg
+from pyroute2.netlink import genlmsg
+from pyroute2.netlink.nlsocket import Marshal
 from pyroute2.netlink.generic import GenericNetlinkSocket
 import logging
 
 logger = logging.getLogger(__name__)
 
+GTP_CMD_UNSPEC = 0
+
+class gtpcmd(genlmsg):
+    prefix = 'GTPA_'
+    nla_map = (('GTPA_UNSPEC', 'none'))
+
+class MarshalGtp(Marshal):
+    msg_map = {GTP_CMD_UNSPEC: gtpcmd}
+
+
 '''
 pyroute2 low-level socket, with gtp discovery
 '''
 class GtpSocket(GenericNetlinkSocket):
+
+    def __init__(self):
+        GenericNetlinkSocket.__init__(self)
+        self.marshal = MarshalGtp()
 
     def discovery(self):
         '''
@@ -19,7 +36,7 @@ class GtpSocket(GenericNetlinkSocket):
         msg = ctrlmsg()
         msg['cmd'] = CTRL_CMD_GETFAMILY
         msg['version'] = 1
-        msg['attrs'].append(['CTRL_ATTR_FAMILY_ID', GENL_ID_CTRL])
+#        msg['attrs'].append(['CTRL_ATTR_FAMILY_ID', GENL_ID_CTRL])
         msg['attrs'].append(['CTRL_ATTR_FAMILY_NAME', "gtp"])
         msg['header']['type'] = GENL_ID_CTRL
         msg['header']['flags'] = NLM_F_REQUEST
