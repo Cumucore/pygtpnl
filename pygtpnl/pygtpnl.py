@@ -76,7 +76,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     # 1 is gtp version
     tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
     sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
-    logger.debug("sock.pid: {}".format(sock.pid))
+    logger.debug("sock.pid: {}".format(sock.getsockname()[0]))
 
     c_sock = MNL_SOCK(sock.fileno(), sockaddr)
     logger.debug("c_sock done")
