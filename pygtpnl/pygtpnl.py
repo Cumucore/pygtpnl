@@ -39,7 +39,9 @@ def dev_create(ip, devname):
 
     # call libgtpnl to do it, mnl dep
     creator = lgnl.gtp_dev_create
+    creator.argtypes = [c_int, c_char_p, c_int, c_int]
     try:
+        logger.debug("creating device: {} {} {} {}".format(-1, bstring, sock0.fileno(), sock1.fileno()))
         creator(-1 , bstring, sock0.fileno(), sock1.fileno())
     # cant catch C errors
     except Exception as e:
@@ -86,11 +88,11 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     if_mnlsock_id = lgnl.genl_lookup_family
     if_mnlsock_id.argtypes = [c_void_p, c_char_p]
     mnlsock_id = if_mnlsock_id(byref(c_sock), devname.encode('ascii'))
-    logger.debug("mnlsock_id: {}".format(mnlsock_id))
 
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_uint16, c_void_p, c_void_p]
     try:
+        logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, byref(c_sock), byref(tunnel))
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
         #ret=tadd(mnlsock_id, sock, byref(tunnel))
     except Exception as e:
