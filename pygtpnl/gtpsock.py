@@ -51,3 +51,25 @@ class GtpSocket(GenericNetlinkSocket):
                 logger.error('Please check if the protocol module is loaded')
             raise err
         return msg
+
+    def getfam(self):
+        '''
+        Resolve gtp netlink protocol
+        '''
+        msg = genlmsg()
+        msg['cmd'] = CTRL_CMD_GETFAMILY
+        msg['version'] = 1
+        msg['attrs'].append(['CTRL_ATTR_FAMILY_ID', GENL_ID_CTRL])
+        msg['header']['type'] = GENL_ID_CTRL
+        msg['header']['flags'] = NLM_F_REQUEST
+        msg['header']['pid'] = self.pid
+        msg.encode()
+        self.sendto(msg.data, (0, 0))
+        msg = self.get()[0]
+        err = msg['header'].get('error', None)
+        if err is not None:
+            if hasattr(err, 'code') and err.code == errno.ENOENT:
+                logger.error('gtp netlink protocol not found')
+                logger.error('Please check if the protocol module is loaded')
+            raise err
+        return msg
