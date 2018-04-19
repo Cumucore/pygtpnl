@@ -3,7 +3,7 @@ Python wrapper for libgtpnl
 '''
 
 from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
-from ctypes import byref
+from ctypes import pointer,byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
 from .gtpsock import GtpSocket
@@ -77,12 +77,15 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     enb_bytes = IN_ADDR(unpack("<I", inet_aton(enb_ip))[0])
     # 1 is gtp version
     tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
+
     sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
     logger.debug("sock.pid: {}".format(sock.getsockname()[0]))
-
     c_sock = MNL_SOCK(sock.fileno(), sockaddr)
     logger.debug("c_sock done")
     logger.debug("c_sock: {}".format(c_sock))
+
+    p_tun = pointer(tunnel)
+    p_sock = pointer(c_sock)
 
     #TODO: pythonize
     if_mnlsock_id = lgnl.genl_lookup_family
@@ -92,8 +95,10 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_uint16, c_void_p, c_void_p]
     try:
-        logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, byref(c_sock), byref(tunnel)))
-        ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
+        #logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, byref(c_sock), byref(tunnel)))
+        #ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
+        logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, p_sock, p_tun))
+        ret=tadd(mnlsock_id, p_sock, p_tun)
         #ret=tadd(mnlsock_id, sock, byref(tunnel))
     except Exception as e:
         logger.error("{}".format(e))
