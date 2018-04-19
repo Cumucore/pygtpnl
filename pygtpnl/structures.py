@@ -59,5 +59,5 @@ class GTPTUNNEL(Structure):
                   ("ms_addr", IN_ADDR),
                   ("sgsn_addr", IN_ADDR),
                   ("gtp_version", c_int),
-                  ("u", VERSIONS), #gtp teids
+                  ("u", VERSIONS) #gtp teids
                  ]
