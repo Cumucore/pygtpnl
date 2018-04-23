@@ -49,9 +49,10 @@ def dev_create(ip, devname):
         exit(1)
 
     #Open communications 
-    sock = GtpSocket()
-    sock.discovery()
-    return sock
+    #sock = GtpSocket()
+    #ock.discovery()
+    #return sock
+    return 1
 
 # destroy a gtp dev, kill all, no errors ever, TODO: maybe propagate from C, not trivial
 def dev_stop(name):
