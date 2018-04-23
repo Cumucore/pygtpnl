@@ -8,8 +8,8 @@ from ctypes import c_byte
 
 # libgtpnl
 class V0(Structure):
-    _fields_ = [("tid", c_uint, 64),
-                ("flowid", c_uint, 16)
+    _fields_ = [("tid", c_uint),
+                ("flowid", c_uint)
                ]
 
 # libgtpnl
