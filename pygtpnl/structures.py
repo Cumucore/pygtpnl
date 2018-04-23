@@ -3,7 +3,7 @@ Python representations of structs used in libgtpnl
 '''
 
 from ctypes import Structure, Union
-from ctypes import c_ushort, c_int, c_uint16, c_uint32, c_uint64
+from ctypes import c_ushort, c_int, c_uint, c_uint16, c_uint32, c_uint64
 from ctypes import c_byte
 
 # libgtpnl
