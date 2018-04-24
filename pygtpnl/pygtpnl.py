@@ -6,6 +6,8 @@ from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import pointer,byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
 from struct import unpack
+from pyroute2 import IPRoute
+from pyroute2.netlink.exceptions import NetlinkError
 from .gtpsock import GtpSocket
 from .structures import *
 import logging
@@ -38,7 +40,7 @@ def dev_create(ip, devname):
         exit(1)
 
     # call libgtpnl to do it, mnl dep
-    creator = lgnl.gtp_dev_create
+    creator = lgnl.gtp_dev_create_sgsn
     creator.argtypes = [c_int, c_char_p, c_int, c_int]
     try:
         logger.debug("creating device: {} {} {} {}".format(-1, bstring, sock0.fileno(), sock1.fileno()))
@@ -47,6 +49,14 @@ def dev_create(ip, devname):
     except Exception as e:
         logger.error("{}".format(e))
         exit(1)
+
+    try:
+        ip=IPRoute()
+        i=ip.link_lookup(ifname=devname)
+        ip.link("set", index=i, mtu=1454)
+        ip.close()
+    except NetlinkError as e:
+        logger.error("Device netlink netlinkerror: {}".format(e))
 
     #Open communications 
     #sock = GtpSocket()
