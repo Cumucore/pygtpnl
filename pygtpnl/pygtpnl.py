@@ -4,7 +4,7 @@ Python wrapper for libgtpnl
 
 from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import pointer,byref
-from socket import socket,inet_aton,AF_INET,SOCK_DGRAM # IPv4
+from socket import socket,inet_aton,AF_INET,SOCK_DGRAM,AF_NETLINK # IPv4
 from struct import unpack
 from pyroute2 import IPRoute
 from pyroute2.netlink.exceptions import NetlinkError
@@ -30,17 +30,17 @@ def dev_create(ip, devname):
     #c_sock1 = SOCKADDR_IN(AF_INET, 2152, ip_bytes, [0]*8)
 
     # sockname tuple str, int
-    v0 = (ip, 3386)
-    v1 = (ip, 2152)
-    try:
-        sock0.bind(v0)
-        sock1.bind(v1)
-    except Exception as e:
-        logger.error("bind fail".format(e))
-        exit(1)
+#    v0 = (ip, 3386)
+#    v1 = (ip, 2152)
+#    try:
+#        sock0.bind(v0)
+#        sock1.bind(v1)
+#    except Exception as e:
+#        logger.error("bind fail".format(e))
+#        exit(1)
 
     # call libgtpnl to do it, mnl dep
-    creator = lgnl.gtp_dev_create_sgsn
+    creator = lgnl.gtp_dev_create
     creator.argtypes = [c_int, c_char_p, c_int, c_int]
     try:
         logger.debug("creating device: {} {} {} {}".format(-1, bstring, sock0.fileno(), sock1.fileno()))
@@ -50,19 +50,19 @@ def dev_create(ip, devname):
         logger.error("{}".format(e))
         exit(1)
 
-    try:
-        ip=IPRoute()
-        i=ip.link_lookup(ifname=devname)
-        ip.link("set", index=i, mtu=1454)
-        ip.close()
-    except NetlinkError as e:
-        logger.error("Device netlink netlinkerror: {}".format(e))
+#    try:
+#        ip=IPRoute()
+#        i=ip.link_lookup(ifname=devname)
+#        ip.link("set", index=i, mtu=1454)
+#        ip.close()
+#    except NetlinkError as e:
+#        logger.error("Device netlink netlinkerror: {}".format(e))
 
     #Open communications 
-    #sock = GtpSocket()
-    #ock.discovery()
-    #return sock
-    return 1
+    sock = GtpSocket()
+    sock.discovery()
+    return sock
+    #return 1
 
 # destroy a gtp dev, kill all, no errors ever, TODO: maybe propagate from C, not trivial
 def dev_stop(name):
