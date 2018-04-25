@@ -6,11 +6,11 @@ from ctypes import CDLL,c_int,c_uint16,c_char_p,c_void_p
 from ctypes import pointer,byref
 from socket import socket,inet_aton,AF_INET,SOCK_DGRAM,AF_NETLINK # IPv4
 from struct import unpack
-from pyroute2 import IPRoute
-from pyroute2.netlink.exceptions import NetlinkError
 from .gtpsock import GtpSocket
 from .structures import *
 import logging
+
+from time import sleep
 
 logger = logging.getLogger(__name__)
 
@@ -23,18 +23,14 @@ except OSError:
 # 2 socks needed, although GTPv0 is not used, use ascii devnames
 def dev_create(ip, devname):
     bstring = devname.encode('ascii')
-    sock0 = socket(AF_INET, SOCK_DGRAM)
-    sock1 = socket(AF_INET, SOCK_DGRAM)
     #ip_bytes = IN_ADDR(unpack("<I", inet_aton(ip))[0])
     #c_sock0 = SOCKADDR_IN(AF_INET, 3386, ip_bytes, [0]*8)
     #c_sock1 = SOCKADDR_IN(AF_INET, 2152, ip_bytes, [0]*8)
 
     # sockname tuple str, int
 #    v0 = (ip, 3386)
-#    v1 = (ip, 2152)
 #    try:
 #        sock0.bind(v0)
-#        sock1.bind(v1)
 #    except Exception as e:
 #        logger.error("bind fail".format(e))
 #        exit(1)
