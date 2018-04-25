@@ -21,7 +21,7 @@ except OSError:
     exit(1)
 
 # 2 socks needed, although GTPv0 is not used, use ascii devnames
-def dev_create(ip, devname):
+def dev_create(devname, fd0, fd1):
     bstring = devname.encode('ascii')
     #ip_bytes = IN_ADDR(unpack("<I", inet_aton(ip))[0])
     #c_sock0 = SOCKADDR_IN(AF_INET, 3386, ip_bytes, [0]*8)
@@ -39,8 +39,8 @@ def dev_create(ip, devname):
     creator = lgnl.gtp_dev_create
     creator.argtypes = [c_int, c_char_p, c_int, c_int]
     try:
-        logger.debug("creating device: {} {} {} {}".format(-1, bstring, sock0.fileno(), sock1.fileno()))
-        creator(-1 , bstring, sock0.fileno(), sock1.fileno())
+        logger.debug("creating device: {} {} {} {}".format(-1, bstring, fd0, fd1))
+        creator(-1 , bstring, fd0, fd1)
     # cant catch C errors
     except Exception as e:
         logger.error("{}".format(e))
