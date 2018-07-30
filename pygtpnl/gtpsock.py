@@ -6,6 +6,7 @@ from pyroute2.netlink import ctrlmsg
 from pyroute2.netlink import genlmsg
 from pyroute2.netlink.nlsocket import Marshal
 from pyroute2.netlink.generic import GenericNetlinkSocket
+from errno import ENOENT
 import logging
 
 logger = logging.getLogger(__name__)
@@ -46,10 +47,10 @@ class GtpSocket(GenericNetlinkSocket):
         msg = self.get()[0]
         err = msg['header'].get('error', None)
         if err is not None:
-            if hasattr(err, 'code') and err.code == errno.ENOENT:
+            if hasattr(err, 'code') and err.code == ENOENT:
                 logger.error('gtp netlink protocol not found')
-                logger.error('Please check if the protocol module is loaded')
-            raise err
+                logger.error('maybe the protocol module is loaded, (modprobe gtp)')
+            exit(1)
         return msg
 
     def getfam(self):
