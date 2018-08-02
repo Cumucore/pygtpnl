@@ -6,6 +6,7 @@ Works by calling libgtpnl C functions through ctypes
 
 ``` shell
 python3 setup.py install
+pip install -r requirements.txt
 ```
 
 ## Usage

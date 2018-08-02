@@ -23,17 +23,6 @@ except OSError:
 # 2 socks needed, although GTPv0 is not used, use ascii devnames
 def dev_create(devname, fd0, fd1):
     bstring = devname.encode('ascii')
-    #ip_bytes = IN_ADDR(unpack("<I", inet_aton(ip))[0])
-    #c_sock0 = SOCKADDR_IN(AF_INET, 3386, ip_bytes, [0]*8)
-    #c_sock1 = SOCKADDR_IN(AF_INET, 2152, ip_bytes, [0]*8)
-
-    # sockname tuple str, int
-#    v0 = (ip, 3386)
-#    try:
-#        sock0.bind(v0)
-#    except Exception as e:
-#        logger.error("bind fail".format(e))
-#        exit(1)
 
     # call libgtpnl to do it, mnl dep
     creator = lgnl.gtp_dev_create
@@ -45,14 +34,6 @@ def dev_create(devname, fd0, fd1):
     except Exception as e:
         logger.error("{}".format(e))
         exit(1)
-
-#    try:
-#        ip=IPRoute()
-#        i=ip.link_lookup(ifname=devname)
-#        ip.link("set", index=i, mtu=1454)
-#        ip.close()
-#    except NetlinkError as e:
-#        logger.error("Device netlink netlinkerror: {}".format(e))
 
     #Open communications 
     sock = GtpSocket()
