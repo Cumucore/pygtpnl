@@ -23,19 +23,8 @@ except OSError:
 # 2 socks needed, although GTPv0 is not used, use ascii devnames
 def dev_create(devname, fd0, fd1):
     bstring = devname.encode('ascii')
-    #ip_bytes = IN_ADDR(unpack("<I", inet_aton(ip))[0])
-    #c_sock0 = SOCKADDR_IN(AF_INET, 3386, ip_bytes, [0]*8)
-    #c_sock1 = SOCKADDR_IN(AF_INET, 2152, ip_bytes, [0]*8)
 
-    # sockname tuple str, int
-#    v0 = (ip, 3386)
-#    try:
-#        sock0.bind(v0)
-#    except Exception as e:
-#        logger.error("bind fail".format(e))
-#        exit(1)
-
-    # call libgtpnl to do it, mnl dep
+    # call libgtpnl to create, mnl dep
     creator = lgnl.gtp_dev_create
     creator.argtypes = [c_int, c_char_p, c_int, c_int]
     try:
@@ -46,19 +35,10 @@ def dev_create(devname, fd0, fd1):
         logger.error("{}".format(e))
         exit(1)
 
-#    try:
-#        ip=IPRoute()
-#        i=ip.link_lookup(ifname=devname)
-#        ip.link("set", index=i, mtu=1454)
-#        ip.close()
-#    except NetlinkError as e:
-#        logger.error("Device netlink netlinkerror: {}".format(e))
-
     #Open communications 
     sock = GtpSocket()
     sock.discovery()
     return sock
-    #return 1
 
 # destroy a gtp dev, kill all, no errors ever, TODO: maybe propagate from C, not trivial
 def dev_stop(name):
@@ -67,7 +47,9 @@ def dev_stop(name):
     dev_destroy.argtypes = [c_char_p]
     dev_destroy(bstring)
 
-'''the tunnel creator requires nlsock address as arg to  preserve abstraction level it seems
+'''tunnel_add()
+
+   the tunnel creator requires nlsock address as arg to preserve abstraction level it seems
    Sock is a pyroute2 NetlinkSocket object
 '''
 
@@ -102,12 +84,10 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
 
     tadd = lgnl.gtp_add_tunnel
     tadd.argtypes = [c_uint16, c_void_p, c_void_p]
+
     try:
-        #logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, byref(c_sock), byref(tunnel)))
         ret=tadd(mnlsock_id, byref(c_sock), byref(tunnel))
         logger.debug("creating tunnel: {} {} {}".format(mnlsock_id, p_sock.contents, p_tun.contents))
-        #ret=tadd(mnlsock_id, p_sock, p_tun)
-        #ret=tadd(mnlsock_id, sock, byref(tunnel))
     except Exception as e:
         logger.error("{}".format(e))
 
@@ -142,7 +122,6 @@ def tunnel_del(ns, i_tei, o_tei, devname, sock):
         tdel(mnlsock_id, byref(c_sock), byref(tunnel))
     except Exception as e:
         logger.error("{}".format(e))
-
 
 #uses C to print tunnel list of device, maybe pythonification?
 def tunnel_list(devname, sock):

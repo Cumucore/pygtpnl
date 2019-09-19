@@ -69,7 +69,7 @@ class GtpSocket(GenericNetlinkSocket):
         msg = self.get()[0]
         err = msg['header'].get('error', None)
         if err is not None:
-            if hasattr(err, 'code') and err.code == errno.ENOENT:
+            if hasattr(err, 'code') and err.code == ENOENT:
                 logger.error('gtp netlink protocol not found')
                 logger.error('Please check if the protocol module is loaded')
             raise err
