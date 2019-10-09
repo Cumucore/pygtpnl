@@ -58,6 +58,7 @@ class GTPTUNNEL(Structure):
                   ("ifidx", c_uint32),
                   ("ms_addr", IN_ADDR),
                   ("sgsn_addr", IN_ADDR),
+                  ("bearer_id", c_byte),
                   ("gtp_version", c_int),
                   ("u", VERSIONS) #gtp teids
                  ]

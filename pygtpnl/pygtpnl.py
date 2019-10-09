@@ -53,8 +53,12 @@ def dev_stop(name):
    Sock is a pyroute2 NetlinkSocket object
 '''
 
-def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
-    logger.info("adding tunnel ue:{}, enb:{}, i:{}, o:{}".format(ue_ip, enb_ip, i_tei, o_tei))
+def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, socki, ebi=0):
+    logger.info("adding tunnel ue:{}, enb:{}, i:{}, o:{}, ebi:{}".format(ue_ip,
+                                                                         enb_ip,
+                                                                         i_tei,
+                                                                         o_tei,
+                                                                         ebi))
 
     ifindex = lgnl.if_nametoindex
     ifindex.argtypes = [c_char_p]
@@ -66,7 +70,7 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     ue_bytes = IN_ADDR(unpack("<I", inet_aton(ue_ip))[0])
     enb_bytes = IN_ADDR(unpack("<I", inet_aton(enb_ip))[0])
     # 1 is gtp version
-    tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
+    tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, ebi, 1, versions)
 
     sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
     logger.debug("sock.pid: {}".format(sock.getsockname()[0]))
@@ -91,8 +95,8 @@ def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock):
     except Exception as e:
         logger.error("{}".format(e))
 
-def tunnel_del(ns, i_tei, o_tei, devname, sock):
-    logger.info("deleting tunnel i:{}, o:{}".format(i_tei, o_tei))
+def tunnel_del(ns, i_tei, o_tei, devname, sock, ebi=0):
+    logger.info("deleting tunnel i:{}, o:{}, ebi:{}".format(i_tei, o_tei, ebi))
     ifindex = lgnl.if_nametoindex
     ifindex.argtypes = [c_char_p]
     idx = ifindex(devname.encode('ascii'))
@@ -102,7 +106,7 @@ def tunnel_del(ns, i_tei, o_tei, devname, sock):
     ue_bytes = IN_ADDR(0)
     enb_bytes = IN_ADDR(0)
     # 1 is gtp version
-    tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, 1, versions)
+    tunnel = GTPTUNNEL(ns, idx, ue_bytes, enb_bytes, ebi, 1, versions)
     sockaddr = SOCKADDR_NL(sock.family, 0, sock.getsockname()[0], sock.groups)
     logger.debug("sock.pid: {}".format(sock.pid))
 
