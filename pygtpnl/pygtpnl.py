@@ -53,7 +53,7 @@ def dev_stop(name):
    Sock is a pyroute2 NetlinkSocket object
 '''
 
-def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, socki, ebi=0):
+def tunnel_add(ns, ue_ip, enb_ip, i_tei, o_tei, devname, sock, ebi=0):
     logger.info("adding tunnel ue:{}, enb:{}, i:{}, o:{}, ebi:{}".format(ue_ip,
                                                                          enb_ip,
                                                                          i_tei,
