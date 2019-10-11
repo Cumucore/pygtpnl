@@ -18,7 +18,6 @@ GTPA_LINK = 1
 GTPA_VERSION = 2
 GTPA_TID = 3
 GTPA_PEER_ADDRESS = 4
-#define GTPA_SGSN_ADDRESS GTPA_PEER_ADDRESS /* maintain legacy attr name */
 GTPA_MS_ADDRESS = 5
 GTPA_FLOW = 6
 GTPA_NET_NS_FD = 7
@@ -37,9 +36,6 @@ class gtpmsg(nlmsg):
 def tunnel_listp(devname):
     s=NetlinkSocket()
     s.bind()
-    #s.put({'index': 1}, RTM_GETLINK)
-    #s.get()
-    #s.close()
 
     msg = ifinfmsg()
     nonce = 123
@@ -49,17 +45,8 @@ def tunnel_listp(devname):
     msg['family'] = 18 # address family
 
     # attach NLA -- it MUST be a list / mutable
-    msg['attrs'] = [['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                    ['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                    ['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                    ['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                    ['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                    ['CTRL_ATTR_FAMILY_NAME', "gtp0"],
-                   ]
+    msg['attrs'] = [['CTRL_ATTR_FAMILY_NAME', "gtp0"]]
 
-#    msg['attrs'] = [['IFLA_INFO_KIND', "gtp0"],
-#                    ['IFA_ADDRESS', '192.162.0.1']]
-#
     # fill generic netlink fields
     msg['header']['sequence_number'] = nonce  # an unique seq number
     msg['header']['pid'] = os.getpid()
